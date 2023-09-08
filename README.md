@@ -13,13 +13,13 @@ Usage
 Morpheme Notation
 MARPT uses a straightforward and consistent notation for morphemes
 
-* + Prefix (p)
-* $ Root (r)
-* - Interfix (i)
-* ^ Suffix (s)
-* * Ending (e)
-* @ Postfix (x)
-* &, T Start and end of the word
+*  '+' Prefix (p)
+ * '$' Root (r)
+ * '-' Interfix (i)
+ * '^' Suffix (s)
+ * '*'  Ending (e)
+ * '@' Postfix (x)
+ * '&', 'T' Start and end of the word
 
 ## BNF Parser
 MARPT provides a BNF parser that can generate valid word forms based on a given set of morphemes. However, please note that this parser may be less efficient for large-scale analysis.
