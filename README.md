@@ -2,6 +2,11 @@
 # MARPT (Morphology Analysis and Recursive Parsing Toolkit)
 MARPT (Morphology Analysis and Recursive Parsing Toolkit) is a Python library designed to facilitate morphological analysis and recursive parsing of words. This comprehensive toolkit combines the power of BNF grammars and Mealy machines to provide linguists, researchers, and language enthusiasts with a versatile set of tools for linguistic analysis.
 
+## Console
+py parse.py -w --word -f --folder
+i.e.
+py parse.py -w şerirşerirlikcicici -f tr
+
 ## Installation
 To start using MARPT, you'll need to install the required Python libraries. You can install them using pip
 

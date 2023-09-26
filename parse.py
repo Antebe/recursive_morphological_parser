@@ -5,26 +5,20 @@ import time
 from nltk import CFG
 from nltk.parse.generate import generate
 import argparse
+import morph_confidence
+import read_morphemes 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-w', '--word', type=str, required=True)
+parser.add_argument('-f', '--folder', type=str, required=True)
 args = parser.parse_args()
 sel_word = args.word
+folder_lang = args.folder
+d = 12 #depth of recursion
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-tr_dir = os.path.join(THIS_DIR, 'tr')
-suff_path = os.path.join(tr_dir, 'suffixes.json')
-with open(suff_path, 'r', encoding='utf-8') as f:
-    suffixes = json.load(f)
-pref_path = os.path.join(tr_dir, 'prefixes.json')
-with open(pref_path, 'r', encoding='utf-8') as f:
-    prefixes = json.load(f)
-root_path = os.path.join(tr_dir, 'roots.json')
-with open(root_path, 'r', encoding='utf-8') as f:
-    roots = json.load(f)
-interf_path = os.path.join(tr_dir, 'interfixes.json')
-with open(interf_path, 'r', encoding='utf-8') as f:
-    interfixes = json.load(f)
+lang_dir = os.path.join(THIS_DIR, folder_lang)
+all_morphemes = read_morphemes.read_morphemes(folder_lang)
 
 
 class Morphemes:
@@ -61,7 +55,7 @@ grammar.productions()
 
 possible_sequences = []
 i = 0
-for production in generate(grammar, depth=10):
+for production in generate(grammar, depth=d):
     possible_sequences.append(''.join(production))
     i += 1
 possible_sequences = list(set(possible_sequences))
@@ -117,9 +111,11 @@ class MealyMachine:
                     combs = self.morphemes_by_sequence(word[index:i])
                     if combs != set():
                         combs = ([j + str(i-1) for j in list(combs)])
+                        #print(letter_matrix)
                         letter_matrix[letters_to_check[index]] = letter_matrix[letters_to_check[index]]+(
                             [(letters_to_check[i-1], combs)])
-                        indicies_to_check.append(i)
+                        if i >= 0:
+                            indicies_to_check.append(i)
         sequence = {letters_to_check[i]: letters_to_check[i+1]
                     for i in range(len(letters_to_check) - 1)}
         sequence[letters_to_check[-1]] = 'T'
@@ -224,7 +220,6 @@ class Filter:
                             paths.append([start] + new_path)
                         else:
                             queue.append((neighbor, new_path))
-
         return paths
 
     def inspect(self):
@@ -237,14 +232,29 @@ class Filter:
         return res
 
 
-M = Morphemes(prefixes=prefixes, roots=roots,
-              interfixes=interfixes, suffixes=suffixes)
+M = Morphemes(prefixes = all_morphemes['prefixes'], roots=all_morphemes['roots'], interfixes=all_morphemes['interfixes'], suffixes=all_morphemes['suffixes'], postfixes=all_morphemes['postfixes'],
+endings=all_morphemes['endings'] )
 
+
+####test#########
 f = Filter(sel_word, M, possible_sequences)
 print(f.inspect())
 start = time.time()
-n = 100
+n = 5
 for i in range(n):
     f = Filter(sel_word, M, possible_sequences)
     f.inspect()
-print(f'Speed: {(time.time() - start)/n} per word')
+print(f'Speed of filter: {(time.time() - start)/n} per word')
+
+print("---")
+mealy = MealyMachine(sel_word, M)
+print(mealy.all_paths())
+#stress testing
+start = time.time()
+
+for i in range(n):
+  mealy = MealyMachine(sel_word, M)
+  mealy.all_paths()
+print(f"Speed of backtracing: {(time.time() - start)/n} per word")
+
+#print(morph_confidence.most_possible(["ppprrr", "prsprs", "prprpr"])) 

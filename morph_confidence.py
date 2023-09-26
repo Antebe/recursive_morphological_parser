@@ -63,18 +63,18 @@ def most_possible(lst):
 
 # Example usage:
 
-print(most_possible(['ppprrsss',
- 'pprrss',
- 'prrss',
- 'pprrs',
- 'ppprrss',
- 'ppprsss',
- 'ppprrs',
- 'pprsss',
- 'pprss',
- 'pprs',
- 'pprrsss',
- 'ppprss',
- 'prrsss',
- 'prrs',
- 'ppprs']))
+# print(most_possible(['ppprrsss',
+#  'pprrss',
+#  'prrss',
+#  'pprrs',
+#  'ppprrss',
+#  'ppprsss',
+#  'ppprrs',
+#  'pprsss',
+#  'pprss',
+#  'pprs',
+#  'pprrsss',
+#  'ppprss',
+#  'prrsss',
+#  'prrs',
+#  'ppprs']))
