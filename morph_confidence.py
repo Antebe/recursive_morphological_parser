@@ -7,7 +7,7 @@ def calculate_confidence(morph):
     Returns:
         A float representing the confidence of the morph.
     """
-    base = list("prsie")
+    base = list("prsiexn")
     weights = {}
     occurrences = {}
     positions = {}
@@ -78,3 +78,11 @@ def most_possible(lst):
 #  'prrsss',
 #  'prrs',
 #  'ppprs']))
+
+def sort_dict(dct):
+    my_dict = dct
+    # Sort the keys in ascending order
+    sorted_keys = most_possible(my_dict.keys())
+    # Create a new dictionary with sorted keys
+    sorted_dict = {key: my_dict[key] for key in sorted_keys}
+    return sorted_dict

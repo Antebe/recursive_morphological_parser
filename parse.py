@@ -58,9 +58,6 @@ for production in generate(grammar, depth=d):
     i += 1
 possible_sequences = list(set(possible_sequences))
 print("# of sequences: ", len(possible_sequences))
-print("rir" in possible_sequences)
-print("prirse" in possible_sequences)
-
 
 class MealyMachine:
     def __init__(self, word, M: Morphemes):
@@ -211,7 +208,6 @@ class Filter:
 
         while queue:
             node, path = queue.popleft()
-
             for neighbor in self.graph[node]:
                 edges = self.graph[node][neighbor]
                 for edge in edges:
@@ -224,22 +220,27 @@ class Filter:
         return paths
 
     def inspect(self):
-        res = []
+        res = {}
         for chars in self.possible_sequences:
             chars = chars + 'n'
-            if len(chars) <= len(self.word)+1:
+            if len(chars) <= len(self.word) + 1:
                 if self.find_matching_paths(chars):
-                    res.append((chars, self.find_matching_paths(chars)))
-        return res
+                    #print(chars, self.find_matching_paths(chars))
+                    if chars in res:
+                        res[chars].append(self.find_matching_paths(chars))
+                    else:
+                        res[chars] = self.find_matching_paths(chars)
+        return morph_confidence.sort_dict(res)
 
 
 M = Morphemes(prefixes = all_morphemes['prefixes'], roots=all_morphemes['roots'], interfixes=all_morphemes['interfixes'], suffixes=all_morphemes['suffixes'], postfixes=all_morphemes['postfixes'],
 endings=all_morphemes['endings'] )
 
-
+print("########test#############")
 ####test#########
 f = Filter(sel_word, M, possible_sequences)
-print(f.inspect())
+s = list(f.inspect().keys())[0]
+print(s, f.inspect()[s])
 start = time.time()
 n = 5
 for i in range(n):
@@ -247,15 +248,15 @@ for i in range(n):
     f.inspect()
 print(f'Speed of filter: {(time.time() - start)/n} per word')
 
-print("---")
-mealy = MealyMachine(sel_word, M)
-print(mealy.all_paths())
-#stress testing
-start = time.time()
+# print("---")
+# mealy = MealyMachine(sel_word, M)
+# print(mealy.all_paths())
+# #stress testing
+# start = time.time()
 
-for i in range(n):
-  mealy = MealyMachine(sel_word, M)
-  mealy.all_paths()
-print(f"Speed of backtracing: {(time.time() - start)/n} per word")
+# for i in range(n):
+#   mealy = MealyMachine(sel_word, M)
+#   mealy.all_paths()
+# print(f"Speed of backtracing: {(time.time() - start)/n} per word")
 
 #print(morph_confidence.most_possible(["ppprrr", "prsprs", "prprpr"])) 
