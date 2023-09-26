@@ -14,7 +14,7 @@ parser.add_argument('-f', '--folder', type=str, required=True)
 args = parser.parse_args()
 sel_word = args.word
 folder_lang = args.folder
-d = 12 #depth of recursion
+d = 9 #depth of recursion
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 lang_dir = os.path.join(THIS_DIR, folder_lang)
@@ -42,15 +42,13 @@ class Morphemes:
 
 grammar = CFG.fromstring('''
   W -> Base End | Base
-  Base -> Stem | Stem Suffix
-  Stem -> Prefix Root | Root
-  Suffix -> "s" | XSuffix
-  XSuffix -> "s" Suffix
-  Prefix -> "p" | XPrefix
-  XPrefix -> "p" Prefix
+  Base -> Stem | Stem XBase
+  XBase -> "i" Base | Base
+  Stem ->  Prefix Root Suffix | Prefix Root | Root | Root Suffix
+  Suffix -> "s" | "s" Suffix
+  Prefix -> "p" | "p" Prefix
   End -> "e" | "ex" | "x"
-  Root -> "r" | "r" XRoot
-  XRoot -> "i" Base | Base  ''')
+  Root -> "r"  ''')
 grammar.productions()
 
 possible_sequences = []
@@ -59,6 +57,9 @@ for production in generate(grammar, depth=d):
     possible_sequences.append(''.join(production))
     i += 1
 possible_sequences = list(set(possible_sequences))
+print("# of sequences: ", len(possible_sequences))
+print("rir" in possible_sequences)
+print("prirse" in possible_sequences)
 
 
 class MealyMachine:
