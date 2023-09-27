@@ -239,7 +239,8 @@ endings=all_morphemes['endings'] )
 print("########test#############")
 ####test#########
 f = Filter(sel_word, M, possible_sequences)
-s = list(f.inspect().keys())[0]
+#print(f.automata2graph())
+s = list(f.inspect().keys())[0] #the most probable sequence
 print(s, f.inspect()[s])
 start = time.time()
 n = 5
