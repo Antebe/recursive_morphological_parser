@@ -11,9 +11,11 @@ import read_morphemes
 parser = argparse.ArgumentParser()
 parser.add_argument('-w', '--word', type=str, required=True)
 parser.add_argument('-f', '--folder', type=str, required=True)
+parser.add_argument('-a', '--algo', type=str, required=True)
 args = parser.parse_args()
 sel_word = args.word
 folder_lang = args.folder
+algo = args.algo
 d = 9 #depth of recursion
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -249,26 +251,26 @@ endings=all_morphemes['endings'] )
 
 print("########test#############")
 ####test#########
-f = Filter(sel_word, M, possible_sequences)
-#print(f.automata2graph())
-#s = list(f.inspect().keys())[0] #the most probable sequence
-print(f.inspect())
-start = time.time()
 n = 5
-for i in range(n):
+
+if algo == "filter":
     f = Filter(sel_word, M, possible_sequences)
-    f.inspect()
-print(f'Speed of filter: {(time.time() - start)/n} per word')
+    #print(f.automata2graph())
+    #s = list(f.inspect().keys())[0] #the most probable sequence
+    print(f.inspect())
+    start = time.time()
+    for i in range(n):
+        f = Filter(sel_word, M, possible_sequences)
+        f.inspect()
+    print(f'Speed of filter: {(time.time() - start)/n} per word')
 
-print("---")
-mealy = MealyMachine(sel_word, M)
-print(mealy.all_paths())
-#stress testing
-start = time.time()
-
-for i in range(n):
-  mealy = MealyMachine(sel_word, M)
-  mealy.all_paths()
-print(f"Speed of backtracing: {(time.time() - start)/n} per word")
-
-# print(morph_confidence.most_possible(["ppprrr", "prsprs", "prprpr"])) 
+if algo == "backtrace":
+    mealy = MealyMachine(sel_word, M)
+    print(mealy.all_paths())
+    #stress testing
+    start = time.time() 
+    for i in range(n):
+        mealy = MealyMachine(sel_word, M)
+        mealy.all_paths()
+    print(f"Speed of backtracing: {(time.time() - start)/n} per word")
+    #print(morph_confidence.most_possible(["ppppppprs", "ppprss"])) 
