@@ -179,7 +179,18 @@ class MealyMachine:
     def all_paths(self):
         all_paths = self.backtrace_paths(
             self.initial_state, self.terminal_state)
-        return self.remove_duplicates(all_paths)
+        all_paths = self.remove_duplicates(all_paths)
+        decompositions = {}
+        for d in all_paths:
+            seq = str()
+            word_decomposed = list()
+            for morpheme in d:
+                if morpheme[0] == 'T':
+                    continue
+                seq += morpheme[1][0]
+                word_decomposed.append(morpheme[0])
+            decompositions[seq] =  word_decomposed
+        return morph_confidence.sort_dict(decompositions)
 
 
 class Filter:
@@ -240,8 +251,8 @@ print("########test#############")
 ####test#########
 f = Filter(sel_word, M, possible_sequences)
 #print(f.automata2graph())
-s = list(f.inspect().keys())[0] #the most probable sequence
-print(s, f.inspect()[s])
+#s = list(f.inspect().keys())[0] #the most probable sequence
+print(f.inspect())
 start = time.time()
 n = 5
 for i in range(n):
@@ -249,15 +260,15 @@ for i in range(n):
     f.inspect()
 print(f'Speed of filter: {(time.time() - start)/n} per word')
 
-# print("---")
-# mealy = MealyMachine(sel_word, M)
-# print(mealy.all_paths())
-# #stress testing
-# start = time.time()
+print("---")
+mealy = MealyMachine(sel_word, M)
+print(mealy.all_paths())
+#stress testing
+start = time.time()
 
-# for i in range(n):
-#   mealy = MealyMachine(sel_word, M)
-#   mealy.all_paths()
-# print(f"Speed of backtracing: {(time.time() - start)/n} per word")
+for i in range(n):
+  mealy = MealyMachine(sel_word, M)
+  mealy.all_paths()
+print(f"Speed of backtracing: {(time.time() - start)/n} per word")
 
-#print(morph_confidence.most_possible(["ppprrr", "prsprs", "prprpr"])) 
+# print(morph_confidence.most_possible(["ppprrr", "prsprs", "prprpr"])) 
