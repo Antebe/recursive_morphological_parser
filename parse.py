@@ -277,7 +277,7 @@ if algo == "backtrace":
     print(mealy.all_paths())
     #stress testing
     start = time.time() 
-    # for i in range(n):
-    #     mealy = MealyMachine(sel_word, M)
-    #     mealy.all_paths()
-    # print(f"Speed of backtracing: {(time.time() - start)/n} per word")
+    for i in range(n):
+        mealy = MealyMachine(sel_word, M)
+        mealy.all_paths()
+    print(f"Speed of backtracing: {(time.time() - start)/n} per word")
