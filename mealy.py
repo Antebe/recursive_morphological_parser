@@ -3,6 +3,7 @@ import morph_confidence
 
 class MealyMachine:
     def __init__(self, word, M: Morphemes.Morphemes):
+        self.recursion_depth = int(1/3 * len(word))
         self.word = word
         self.M = M
         self.transitions = self.fast_parse()
@@ -12,7 +13,7 @@ class MealyMachine:
                               'p': {'p', 'r'},
                               'r': {'p', 'r', 'T', 's', 'i', 'e'},
                               'i': {'p', 'r'},
-                              's': {'s', 'e', 'x', 'T', 'i', 'p'},
+                              's': {'s', 'e', 'x', 'T', 'i', 'p', 'r'},
                               'e': {'x', 'T'},
                               'x': {'T'},
                               'T': {'T'}}
@@ -41,30 +42,28 @@ class MealyMachine:
         return type2symbol[type] + morpheme
 
     def word2matrix(self, word):
-        letters_to_check = [word[i]+str(i) for i in range(len(word))]
+        letters_to_check = [word[i] + str(i) for i in range(len(word))]
         letter_matrix = {}
         for i in range(len(letters_to_check)):
             letter_matrix[letters_to_check[i]] = list()
 
         indicies_to_check = [0]
         while len(indicies_to_check) != 0:
+            new_indices_to_check = []  # Create a new list to store indices to check
             for index in indicies_to_check:
-                indicies_to_check = []
-                for i in range(len(letters_to_check)+1):
-                    if index > len(word):
-                        break
+                for i in range(index + 1, len(letters_to_check) + 1):  # Start from index + 1
                     combs = self.morphemes_by_sequence(word[index:i])
-                    if combs != set():
-                        combs = ([j + str(i-1) for j in list(combs)])
-                        #print(letter_matrix)
-                        letter_matrix[letters_to_check[index]] = letter_matrix[letters_to_check[index]]+(
-                            [(letters_to_check[i-1], combs)])
-                        if i >= 0:
-                            indicies_to_check.append(i)
-        sequence = {letters_to_check[i]: letters_to_check[i+1]
-                    for i in range(len(letters_to_check) - 1)}
+                    if combs:
+                        combs = [j + str(i - 1) for j in combs]
+                        letter_matrix[letters_to_check[index]] += [(letters_to_check[i - 1], combs)]
+                        new_indices_to_check.append(i)  # Add the new index to check
+            indicies_to_check = new_indices_to_check  # Update the indices to check
+
+        sequence = {letters_to_check[i]: letters_to_check[i + 1] for i in range(len(letters_to_check) - 1)}
         sequence[letters_to_check[-1]] = 'T'
+        #print(letter_matrix, "\n", sequence, "\n", letters_to_check)
         return letter_matrix, sequence, letters_to_check
+
 
     def fast_parse(self):
         word = self.word
@@ -75,6 +74,7 @@ class MealyMachine:
                 transitions[letter] = {}
 
             for trans in matrix[0][letter]:
+                #print(trans)
                 temp = dict()
                 for morph in trans[1]:
                     temp[morph] = {'output': self.num_letter_2_word(matrix[2][int(
@@ -95,9 +95,11 @@ class MealyMachine:
         return possible_inputs
 
     def backtrace_paths(self, current_state, terminal_state, current_output='', path=[], permitted_transitions='&'):
-        #print(current_state, terminal_state, current_output, path, permitted_transitions, self.allowed_paths.get(permitted_transitions))
+        max_depth = self.recursion_depth
+        if max_depth is not None and len(path) >= max_depth:
+            return []  # Return an empty list if the maximum depth is reached.
 
-        if current_state == terminal_state and 'T' in self.allowed_paths.get(permitted_transitions) :
+        if current_state == terminal_state and 'T' in self.allowed_paths.get(permitted_transitions):
             return [(path + [(current_state, current_output)])]
 
         paths = []
@@ -110,13 +112,13 @@ class MealyMachine:
             for input_symbol in possible_inputs:
                 x = self.allowed_paths.get(permitted_transitions)
                 if input_symbol[0] in x:
-                    #print(possible_inputs, input_symbol[0], x)
                     new_path = path + [(current_state, input_symbol, output)]
                     new_output = current_output + output
                     paths.extend(self.backtrace_paths(next_state, terminal_state,
-                                 new_output, new_path, permitted_transitions=input_symbol[0]))
+                                                    new_output, new_path, permitted_transitions=input_symbol[0]))
 
         return paths
+
 
     def remove_duplicates(self, list_of_lists):
         list_of_tuples = [tuple(inner_list) for inner_list in list_of_lists]

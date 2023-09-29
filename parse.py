@@ -6,7 +6,7 @@ import morph_confidence
 import read_morphemes 
 import morphemes as Morphemes
 import mealy as MealyMachine
-import filter
+#import filter
 
 
 parser = argparse.ArgumentParser()
@@ -27,7 +27,7 @@ endings=all_morphemes['endings'] )
 
 print("########test#############")
 ####test#########
-n = 3
+n = 1
 
 if algo == "filter":
     f = filter.Filter(sel_word, M, filter.possible_sequences)
