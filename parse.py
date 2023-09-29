@@ -94,6 +94,10 @@ class MealyMachine:
         if '@' + seqs in M.morphemes:
             result.add('x')
         return result
+    
+    def add_symbol_to_mopheme(self, morpheme:str, type:str):
+        type2symbol = {"p":"+", "r":"$","s":"^","e":"*","i":"-","x":"@"}
+        return type2symbol[type] + morpheme
 
     def word2matrix(self, word):
         letters_to_check = [word[i]+str(i) for i in range(len(word))]
@@ -182,6 +186,7 @@ class MealyMachine:
         all_paths = self.backtrace_paths(
             self.initial_state, self.terminal_state)
         all_paths = self.remove_duplicates(all_paths)
+        #print(all_paths)
         decompositions = {}
         for d in all_paths:
             seq = str()
@@ -190,8 +195,11 @@ class MealyMachine:
                 if morpheme[0] == 'T':
                     continue
                 seq += morpheme[1][0]
-                word_decomposed.append(morpheme[0])
-            decompositions[seq] =  word_decomposed
+                word_decomposed.append(self.add_symbol_to_mopheme(morpheme[2], morpheme[1][0]))
+            if seq in decompositions:
+                decompositions[seq].append(word_decomposed)
+            else:
+                decompositions[seq] = [word_decomposed]
         return morph_confidence.sort_dict(decompositions)
 
 
@@ -269,8 +277,7 @@ if algo == "backtrace":
     print(mealy.all_paths())
     #stress testing
     start = time.time() 
-    for i in range(n):
-        mealy = MealyMachine(sel_word, M)
-        mealy.all_paths()
-    print(f"Speed of backtracing: {(time.time() - start)/n} per word")
-    #print(morph_confidence.most_possible(["ppppppprs", "ppprss"])) 
+    # for i in range(n):
+    #     mealy = MealyMachine(sel_word, M)
+    #     mealy.all_paths()
+    # print(f"Speed of backtracing: {(time.time() - start)/n} per word")
