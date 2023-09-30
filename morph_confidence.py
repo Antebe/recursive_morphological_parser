@@ -7,35 +7,23 @@ def calculate_confidence(morph):
     Returns:
         A float representing the confidence of the morph.
     """
-    base = list("prsiexn")
-    weights = {}
-    occurrences = {}
-    positions = {}
+    char_count = {}
 
-    for i, char in enumerate(base):
-        weights[char] = 1
-        occurrences[char] = 0
-        positions[char] = i + 1
-
-    if "r" not in morph or morph.count("e") > 1:
-        return -1
-
-
-    confidence = 0.01
     for char in morph:
-        occurrences[char] += 1
-        confidence += weights[char]
+        if char in char_count:
+            char_count[char] += 1
+        else:
+            char_count[char] = 1
+    
+    confidence = 0
 
-        for key in weights:
-            if key == char:
-                weights[key] /= (2**occurrences[char])
-            else:
-                if positions[char] < positions[key]:
-                    weights[key] /= 2 + occurrences[char]
-                else:
-                    weights[key] /= ((2.5)**occurrences[char])
+    for k in char_count.keys():
+        if k == 'r':
+            confidence += 4*char_count['r']
+        else:
+            confidence += char_count[k]
 
-    return confidence
+    return confidence * len(morph)
 
 
 def most_possible(lst):
