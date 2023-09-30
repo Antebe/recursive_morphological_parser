@@ -20,6 +20,8 @@ def calculate_confidence(morph):
     for k in char_count.keys():
         if k == 'r':
             confidence += 4*char_count['r']
+        elif k in {'s', 'p'}:
+            confidence += 2*char_count[k]
         else:
             confidence += char_count[k]
 
