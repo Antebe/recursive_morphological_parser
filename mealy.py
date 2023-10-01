@@ -3,7 +3,7 @@ import morph_confidence
 
 class MealyMachine:
     def __init__(self, word, M: Morphemes.Morphemes):
-        self.recursion_depth = int(4/9 * len(word))
+        self.recursion_depth = min([7, int(len(word)/3) + int(len(word) ** (2/3))])
         self.word = word
         self.M = M
         self.transitions = self.fast_parse()
@@ -94,9 +94,9 @@ class MealyMachine:
                 possible_inputs.append(symbol)
         return possible_inputs
 
-    def backtrace_paths(self, current_state, terminal_state, current_output='', path=[], permitted_transitions='&'):
+    def backtrace_paths(self, current_state, terminal_state, current_output='', path=[], permitted_transitions='&', r = 0):
         max_depth = self.recursion_depth
-        if max_depth is not None and len(path) >= max_depth:
+        if max_depth is not None and len(path) >= max_depth or r > len(self.word) / 8: #limit on roots in a row 
             return []  # Return an empty list if the maximum depth is reached.
 
         if current_state == terminal_state and 'T' in self.allowed_paths.get(permitted_transitions):
@@ -114,8 +114,16 @@ class MealyMachine:
                 if input_symbol[0] in x:
                     new_path = path + [(current_state, input_symbol, output)]
                     new_output = current_output + output
+                    
+                    #check roots in a row
+                    r_prime = r
+                    if input_symbol[0] == 'r':
+                        r_prime += 1
+                    else:
+                        r_prime == 0
+
                     paths.extend(self.backtrace_paths(next_state, terminal_state,
-                                                    new_output, new_path, permitted_transitions=input_symbol[0]))
+                                                    new_output, new_path, permitted_transitions=input_symbol[0],r=r_prime))
 
         return paths
 
