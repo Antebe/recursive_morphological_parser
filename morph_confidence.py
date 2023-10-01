@@ -16,14 +16,17 @@ def calculate_confidence(morph):
             char_count[char] = 1
     
     confidence = 0
+    q_rec = -1
+    q_nonrec = -4
+    q_root = -q_rec * (len(morph) + 1)
 
     for k in char_count.keys():
         if k == 'r':
-            confidence += 4*char_count['r']
+            confidence = confidence + q_root*char_count['r']
         elif k in {'s', 'p'}:
-            confidence += 3*char_count[k]
+            confidence = confidence + q_rec*char_count[k]
         else:
-            confidence += char_count[k]
+            confidence = confidence + q_nonrec*char_count[k]
 
     return confidence * len(morph)
 
