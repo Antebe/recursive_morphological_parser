@@ -42,7 +42,8 @@ if algo == "filter":
 
 if algo == "backtrace":
     mealy = MealyMachine.MealyMachine(sel_word, M)
-    print(mealy.all_paths())
+    d = mealy.all_paths()
+    print(list(d.keys())[0], d[list(d.keys())[0]])
     #stress testing
     start = time.time() 
     for i in range(n):

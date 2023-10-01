@@ -1,2 +1,3 @@
 textx
 nltk
+bpemb
