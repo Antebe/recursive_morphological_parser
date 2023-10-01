@@ -3,7 +3,7 @@ import morph_confidence
 
 class MealyMachine:
     def __init__(self, word, M: Morphemes.Morphemes):
-        self.recursion_depth = min([11, int(4/9 * len(word)) + 1])
+        self.recursion_depth = int(4/9 * len(word))
         self.word = word
         self.M = M
         self.transitions = self.fast_parse()

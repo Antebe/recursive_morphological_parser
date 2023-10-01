@@ -1,7 +1,7 @@
 from bpemb import BPEmb
-bpemb_en = BPEmb(lang="en")
+bpemb_en = BPEmb(lang="uk")
 
-s = bpemb_en.encode("i see a lot of toxicity that i must detoxify", vs = 90)
+s = bpemb_en.encode("недооцінюванонавчальний")
 print(s)
 # from wordsegment import load, segment
 # load()
