@@ -49,14 +49,18 @@ def parse_text(text, preprocessed):
     text = text.split()
     for w in text:
         res.append(" ".join(parse(w, preprocessed)))
-        res.append("<END_W>")
+        if w == ".":
+            res.append("<END_SENT>")
+        else:
+            res.append("<END_W>")
     print("Time elapsed: ", time.time() - start)
     return " ".join(res)
     
 ########
 l = "en"
 preprocessed = preprocess(l)
-print(parse_text("she underestimates people who have unlockable doors", preprocessed))
+print(parse_text("she underestimates people who have unlockable doors . \
+                 in my hyperhumble opinion a lot of people fail to recognize the danger of such recklessness  ", preprocessed))
 
 # l = "uk"
 # preprocessed = preprocess(l)
