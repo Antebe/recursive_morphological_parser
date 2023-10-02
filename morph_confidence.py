@@ -17,9 +17,9 @@ def calculate_confidence(morph):
     
     confidence = 0
 
-    q_rec = -1
-    q_nonrec = -4
-    q_root = -q_nonrec * (len(morph) - 1)
+    q_rec = 1
+    q_nonrec = 2
+    q_root = 4
 
     for k in char_count.keys():
         if k == 'r':
