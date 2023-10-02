@@ -56,4 +56,8 @@ def parse_text(text, preprocessed):
 ########
 l = "en"
 preprocessed = preprocess(l)
-print(parse_text("do not underestimate people who have unlockable doors", preprocessed))
+print(parse_text("she underestimates people who have unlockable doors", preprocessed))
+
+# l = "uk"
+# preprocessed = preprocess(l)
+# print(parse_text("щоземлетрусу я бачу радіокардіограф", preprocessed))
